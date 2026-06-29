@@ -17,7 +17,9 @@ export default {
 
   async execute(interaction) {
     try {
-      const message = interaction.options.getString("message").replace(/\\n/g, "\n");
+     const message = interaction.options
+  .getString("message")
+  .replace(/\\n/g, "\n");
 
       await interaction.channel.send({ content: message });
 
