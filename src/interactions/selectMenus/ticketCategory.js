@@ -12,7 +12,7 @@ export default {
     const category = interaction.values[0];
 
     const modal = new ModalBuilder()
-      .setCustomId(`create_ticket_modal:${category}`)
+      .setCustomId('create_ticket_modal')
       .setTitle('Create a Ticket');
 
     const reasonInput = new TextInputBuilder()
