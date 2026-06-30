@@ -1,4 +1,4 @@
-import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, AttachmentBuilder, MessageFlags } from 'discord.js';
+import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, StringSelectMenuBuilder, AttachmentBuilder, MessageFlags } from 'discord.js';
 import { createEmbed, successEmbed } from '../utils/embeds.js';
 import { createTicket, closeTicket, claimTicket, updateTicketPriority } from '../services/ticket.js';
 import { getGuildConfig } from '../services/guildConfig.js';
@@ -119,23 +119,44 @@ const createTicketHandler = {
       if (currentTicketCount >= maxTicketsPerUser) {
         return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `You have reached the maximum number of open tickets (${maxTicketsPerUser}).\n\nPlease close your existing tickets before creating a new one.\n\n**Current Tickets:** ${currentTicketCount}/${maxTicketsPerUser}` });
       }
-      
-      const modal = new ModalBuilder()
-        .setCustomId('create_ticket_modal')
-        .setTitle('Create a Ticket');
 
-      const reasonInput = new TextInputBuilder()
-        .setCustomId('reason')
-        .setLabel('Why are you creating this ticket?')
-        .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Describe your issue...')
-        .setRequired(true)
-        .setMaxLength(1000);
+const menu = new StringSelectMenuBuilder()
+  .setCustomId('ticket_category')
+  .setPlaceholder('Select a ticket category...')
+  .addOptions(
+    {
+      label: 'Support',
+      description: 'Get help from staff',
+      value: 'support',
+      emoji: '🛠️',
+    },
+    {
+      label: 'Report User',
+      description: 'Report a user',
+      value: 'report',
+      emoji: '🚨',
+    },
+    {
+      label: 'Partnership',
+      description: 'Request a partnership',
+      value: 'partnership',
+      emoji: '🤝',
+    },
+    {
+      label: 'Other',
+      description: 'Something else',
+      value: 'other',
+      emoji: '❓',
+    }
+  );
 
-      const actionRow = new ActionRowBuilder().addComponents(reasonInput);
-      modal.addComponents(actionRow);
+const row = new ActionRowBuilder().addComponents(menu);
 
-      await interaction.showModal(modal);
+await interaction.reply({
+  content: 'Choose a ticket category:',
+  components: [row],
+  ephemeral: true,
+});
     } catch (error) {
       logger.error('Error creating ticket modal:', error);
       if (!interaction.replied && !interaction.deferred) {
