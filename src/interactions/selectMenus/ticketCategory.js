@@ -1,32 +1,31 @@
-import {
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
-  ActionRowBuilder,
-} from 'discord.js';
+import { getGuildConfig } from '../../services/guildConfig.js';
+import { createTicket } from '../../services/ticket.js';
 
 export default {
   name: 'ticket_category',
 
-  async execute(interaction) {
-    const category = interaction.values[0];
+  async execute(interaction, client) {
+    const reason = interaction.values[0];
 
-    const modal = new ModalBuilder()
-      .setCustomId('create_ticket_modal')
-      .setTitle('Create a Ticket');
+    const config = await getGuildConfig(client, interaction.guildId);
 
-    const reasonInput = new TextInputBuilder()
-      .setCustomId('reason')
-      .setLabel('Why are you creating this ticket?')
-      .setStyle(TextInputStyle.Paragraph)
-      .setPlaceholder('Describe your issue...')
-      .setRequired(true)
-      .setMaxLength(1000);
-
-    modal.addComponents(
-      new ActionRowBuilder().addComponents(reasonInput)
+    const result = await createTicket(
+      interaction.guild,
+      interaction.member,
+      config.ticketCategoryId,
+      reason
     );
 
-    await interaction.showModal(modal);
+    if (!result.success) {
+      return interaction.reply({
+        content: result.error,
+        ephemeral: true,
+      });
+    }
+
+    await interaction.reply({
+      content: `✅ Your ticket has been created!\n**Reason:** ${reason}`,
+      ephemeral: true,
+    });
   },
 };
