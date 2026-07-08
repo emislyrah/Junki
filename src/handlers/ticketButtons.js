@@ -222,11 +222,23 @@ const closeTicketHandler = {
         return;
       }
 
-      await interaction.reply({
-  content: "Select a reason for your ticket:",
-  components: [dropdownRow],
-  ephemeral: true,
-});
+const result = await closeTicket(
+  interaction.channel,
+  interaction.user,
+  "Closed by staff"
+);
+
+if (result.success) {
+  await interaction.reply({
+    content: "✅ Ticket closed successfully.",
+    ephemeral: true,
+  });
+} else {
+  await replyUserError(interaction, {
+    type: ErrorTypes.UNKNOWN,
+    message: result.error || "Failed to close ticket.",
+  });
+}
     } catch (error) {
       logger.error('Error closing ticket:', error);
 
