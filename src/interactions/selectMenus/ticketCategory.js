@@ -5,7 +5,16 @@ export default {
   name: 'ticket_category',
 
   async execute(interaction, client) {
-    const reason = interaction.values[0];
+    const selected = interaction.values[0];
+
+const reasons = {
+  support: "Support",
+  report: "Report User",
+  partnership: "Partnership",
+  other: "Other",
+};
+
+const reason = reasons[selected] || selected;
 
     const config = await getGuildConfig(client, interaction.guildId);
 
