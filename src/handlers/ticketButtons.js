@@ -227,7 +227,6 @@ const closeTicketHandler = {
   components: [dropdownRow],
   ephemeral: true,
 });
-      await interaction.showModal(modal);
     } catch (error) {
       logger.error('Error closing ticket:', error);
 
