@@ -222,21 +222,11 @@ const closeTicketHandler = {
         return;
       }
 
-      const modal = new ModalBuilder()
-        .setCustomId('ticket_close_modal')
-        .setTitle('Close Ticket');
-
-      const reasonInput = new TextInputBuilder()
-        .setCustomId('reason')
-        .setLabel('Reason for closing (optional)')
-        .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Add an optional reason for closing this ticket...')
-        .setRequired(false)
-        .setMaxLength(1000);
-
-      const actionRow = new ActionRowBuilder().addComponents(reasonInput);
-      modal.addComponents(actionRow);
-
+      await interaction.reply({
+  content: "Select a reason for your ticket:",
+  components: [dropdownRow],
+  ephemeral: true,
+});
       await interaction.showModal(modal);
     } catch (error) {
       logger.error('Error closing ticket:', error);
