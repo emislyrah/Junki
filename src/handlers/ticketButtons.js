@@ -236,7 +236,7 @@ if (result.success) {
 } else {
   await replyUserError(interaction, {
     type: ErrorTypes.UNKNOWN,
-    message: result.error || "Failed to close ticket.",
+    message: 'Could not close the ticket.'
   });
 }
     } catch (error) {
